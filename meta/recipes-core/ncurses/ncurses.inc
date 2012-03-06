@@ -44,7 +44,6 @@ ncurses_configure() {
 	        --enable-hard-tabs \
 	        --enable-xmc-glitch \
 	        --enable-colorfgbg \
-	        --libdir=${base_libdir} \
 	        --with-termpath='${sysconfdir}/termcap:${datadir}/misc/termcap' \
 	        --with-terminfo-dirs='${sysconfdir}/terminfo:${datadir}/terminfo' \
 	        --with-shared \
@@ -124,6 +123,7 @@ do_install() {
         ! ${ENABLE_WIDEC} || \
             oe_runmake -C widec ${_install_opts}
 
+
         cd narrowc
 
         # include some basic terminfo files
@@ -158,29 +158,28 @@ do_install() {
         # else when '-Wl,--no-copy-dt-needed-entries' has been set in
         # linker flags.
         for i in libncurses libncursesw; do
-                f=${D}${base_libdir}/$i.so
+		f=${D}${libdir}/$i.so
                 test -h $f || continue
                 rm -f $f
                 echo '/* GNU ld script */'  >$f
                 echo "INPUT($i.so.5 AS_NEEDED(-ltinfo))" >>$f
         done
-
-        # Make sure that libcurses is linked so that it gets -ltinfo
-        # also, this should be addressed upstream really.
-        ln -sf libncurses.so ${D}${base_libdir}/libcurses.so
+	# Make sure that libcurses is linked so that it gets -ltinfo
+	# also, this should be addressed upstream really.
+	ln -sf libncurses.so ${D}${libdir}/libcurses.so
 
         # create libtermcap.so linker script for backward compatibility
-        f=${D}${base_libdir}/libtermcap.so
+        f=${D}${libdir}/libtermcap.so
         echo '/* GNU ld script */' >$f
         echo 'INPUT(AS_NEEDED(-ltinfo))' >>$f
 
-        oe_multilib_header curses.h
+	oe_multilib_header curses.h
 }
 
 python populate_packages_prepend () {
-        base_libdir = bb.data.expand("${base_libdir}", d)
+        libdir = bb.data.expand("${libdir}", d)
         pnbase = bb.data.expand("${PN}-lib%s", d)
-        do_split_packages(d, base_libdir, '^lib(.*)\.so\..*', pnbase, 'ncurses %s library', prepend=True, extra_depends = '', allow_links=True)
+        do_split_packages(d, libdir, '^lib(.*)\.so\..*', pnbase, 'ncurses %s library', prepend=True, extra_depends = '', allow_links=True)
 }
 
 
@@ -214,10 +213,6 @@ FILES_${PN} = "\
   ${datadir}/tabset \
 "
 
-FILES_${PN}-dev += "\
- ${base_libdir}/*.so \
-"
-
 # This keeps only tput/tset in ncurses
 # clear/reset are in already busybox
 FILES_${PN}-tools = "\
@@ -231,7 +226,6 @@ FILES_${PN}-tools = "\
   ${bindir}/tack \
   ${bindir}/tabs \
 "
-
 # 'reset' is a symlink to 'tset' which is in the 'ncurses' package
 RDEPENDS_${PN}-tools = "${PN}"
 
