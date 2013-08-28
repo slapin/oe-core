@@ -11,8 +11,8 @@ MAJ_VER = "${@d.getVar('PV',1).split('.')[0]}.${@d.getVar('PV',1).split('.')[1]}
 
 SRC_URI = "${GNOME_MIRROR}/pygobject/${MAJ_VER}/pygobject-${PV}.tar.xz"
 
-SRC_URI[md5sum] = "2b11a3050264721aac83188224b093a8"
-SRC_URI[sha256sum] = "a1dffbe2a8e0d490594554ed8d06f0ee4a371acb6c210e7f35158e9ae77e0df4"
+SRC_URI[md5sum] = "a17b3897507f179d643e02f5abf111ac"
+SRC_URI[sha256sum] = "2b87ef3170be3a20a53fbdb348ae4ecb41a72a17ec6531baa67147c3437d2aad"
 S = "${WORKDIR}/pygobject-${PV}"
 
 FILESPATH = "${FILE_DIRNAME}/python-pygobject:${FILE_DIRNAME}/files"
