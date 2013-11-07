@@ -2,30 +2,24 @@ SUMMARY = "Utilities and libraries for producing multi-lingual messages."
 DESCRIPTION = "Gettext offers to programmers, translators, and even users, a well integrated set of tools and documentation. Specifically, the GNU `gettext' utilities are a set of tools that provides a framework to help other GNU packages produce multi-lingual messages. These tools include a set of conventions about how programs should be written to support message catalogs, a directory and file naming organization for the message catalogs themselves, a runtime library supporting the retrieval of translated messages, and a few stand-alone programs to massage in various ways the sets of translatable strings, or already translated strings."
 HOMEPAGE = "http://www.gnu.org/software/gettext/gettext.html"
 SECTION = "libs"
-LICENSE = "GPL-3+ & LGPL-2.1+"
+LICENSE = "GPLv3+ & LGPL-2.1+"
 LIC_FILES_CHKSUM = "file://COPYING;md5=d32239bcb673463ab874e80d47fae504"
 
-PR = "r8"
-DEPENDS = "libxml2-native gettext-native virtual/libiconv ncurses expat"
-DEPENDS_virtclass-native = "libxml2-native"
+DEPENDS = "gettext-native virtual/libiconv expat"
+DEPENDS_class-native = "gettext-minimal-native"
 PROVIDES = "virtual/libintl virtual/gettext"
-PROVIDES_virtclass-native = "virtual/gettext-native"
-CONFLICTS_${PN} = "proxy-libintl"
+PROVIDES_class-native = "virtual/gettext-native"
+RCONFLICTS_${PN} = "proxy-libintl"
 SRC_URI = "${GNU_MIRROR}/gettext/gettext-${PV}.tar.gz \
+	   file://parallel.patch \
           "
 
-SRC_URI_append_libc-uclibc = " file://wchar-uclibc.patch \
-                               file://gnulib-uclibc-sched_param-def.patch \
-                             "
-SRC_URI += "http://sources.gentoo.org/cgi-bin/viewvc.cgi/gentoo-x86/sys-devel/m4/files/m4-1.4.16-no-gets.patch;name=p"
+PACKAGECONFIG[msgcat-curses] = "--with-libncurses-prefix=${STAGING_LIBDIR}/..,--disable-curses,ncurses,"
 
-SRC_URI[p.md5sum] = "6533ca02d3dbe01f0e96606f7fced4bf"
-SRC_URI[p.sha256sum] = "6059410a6ed64f68a07aa28cc65bc1c7ee6c6528f2750f1c5ba966d82eb521b3"
+LDFLAGS_prepend_libc-uclibc = " -lrt -lpthread "
 
-SRC_URI[md5sum] = "3dd55b952826d2b32f51308f2f91aa89"
-SRC_URI[sha256sum] = "93ac71a7afa5b70c1b1032516663658c51e653087f42a3fc8044752c026443e9"
-
-#PARALLEL_MAKE = ""
+SRC_URI[md5sum] = "3fc808f7d25487fc72b5759df7419e02"
+SRC_URI[sha256sum] = "0d8f9a33531b77776b3dc473e7940019ca19bfca5b4c06db6e96065eeb07245d"
 
 inherit autotools
 
@@ -35,8 +29,8 @@ EXTRA_OECONF += "--without-lispdir \
                  --disable-java \
                  --disable-native-java \
                  --disable-openmp \
+                 --disable-acl \
                  --with-included-glib \
-                 --with-libncurses-prefix=${STAGING_LIBDIR}/.. \
                  --without-emacs \
                  --without-cvs \
                  --without-git \
@@ -65,6 +59,8 @@ FILES_libgettextsrc = "${libdir}/libgettextsrc-*.so*"
 
 PACKAGES =+ "gettext-runtime gettext-runtime-dev gettext-runtime-doc"
 
+FILES_${PN} += "${libdir}/${BPN}/*"
+
 FILES_gettext-runtime = "${bindir}/gettext \
                          ${bindir}/ngettext \
                          ${bindir}/envsubst \
@@ -78,8 +74,7 @@ FILES_gettext-runtime_append_libc-uclibc = " ${libdir}/libintl.so.* \
 FILES_gettext-runtime-dev += "${libdir}/libasprintf.a \
                       ${includedir}/autosprintf.h \
                      "
-FILES_gettext-runtime-dev_append_libc-uclibc = " ${libdir}/libintl.a \
-                                                 ${libdir}/libintl.so \
+FILES_gettext-runtime-dev_append_libc-uclibc = " ${libdir}/libintl.so \
                                                  ${includedir}/libintl.h \
                                                "
 FILES_gettext-runtime-doc = "${mandir}/man1/gettext.* \
@@ -99,6 +94,13 @@ FILES_gettext-runtime-doc = "${mandir}/man1/gettext.* \
 
 do_install_append() {
     rm -f ${D}${libdir}/preloadable_libintl.so
+}
+
+do_install_append_class-native () {
+	rm ${D}${datadir}/aclocal/*
+	rm ${D}${datadir}/gettext/config.rpath
+	rm ${D}${datadir}/gettext/po/Makefile.in.in
+	rm ${D}${datadir}/gettext/po/remove-potcdate.sin
 }
 
 BBCLASSEXTEND = "native nativesdk"
