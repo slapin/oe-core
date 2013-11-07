@@ -9,17 +9,20 @@ LIC_FILES_CHKSUM = "file://COPYING;md5=d32239bcb673463ab874e80d47fae504"
 SECTION = "devel"
 DEPENDS = "bison-native flex-native"
 
-PR = "r2"
+PR = "r3"
 
 BASE_SRC_URI = "${GNU_MIRROR}/bison/bison-${PV}.tar.gz \
 	   file://m4.patch \
 	  "
 
 SRC_URI = "${BASE_SRC_URI} \
-        file://fix_cross_manpage_building.patch "
+        file://fix_cross_manpage_building.patch \
+        http://sources.gentoo.org/cgi-bin/viewvc.cgi/gentoo-x86/sys-devel/m4/files/m4-1.4.16-no-gets.patch;name=p"
 
 SRC_URI[md5sum] = "687e1dcd29452789d34eaeea4c25abe4"
 SRC_URI[sha256sum] = "722def46e4a19a5b7a579ef30db1965f86c37c1a20a5f0113743a2e4399f7c99"
+SRC_URI[p.md5sum] = "6533ca02d3dbe01f0e96606f7fced4bf"
+SRC_URI[p.sha256sum] = "6059410a6ed64f68a07aa28cc65bc1c7ee6c6528f2750f1c5ba966d82eb521b3"
 
 DEPENDS_virtclass-native = "gettext-minimal-native"
 SRC_URI_virtclass-native = "${BASE_SRC_URI}"
@@ -33,9 +36,5 @@ do_install_append_virtclass-native() {
 		BISON_PKGDATADIR=${STAGING_DATADIR_NATIVE}/bison
 }
 #bison-native encodes the staging M4 path
-SRC_URI += "http://sources.gentoo.org/cgi-bin/viewvc.cgi/gentoo-x86/sys-devel/m4/files/m4-1.4.16-no-gets.patch;name=p"
-
-SRC_URI[p.md5sum] = "6533ca02d3dbe01f0e96606f7fced4bf"
-SRC_URI[p.sha256sum] = "6059410a6ed64f68a07aa28cc65bc1c7ee6c6528f2750f1c5ba966d82eb521b3"
 
 BBCLASSEXTEND = "native"
