@@ -33,4 +33,9 @@ do_install_append_virtclass-native() {
 		BISON_PKGDATADIR=${STAGING_DATADIR_NATIVE}/bison
 }
 #bison-native encodes the staging M4 path
+SRC_URI += "http://sources.gentoo.org/cgi-bin/viewvc.cgi/gentoo-x86/sys-devel/m4/files/m4-1.4.16-no-gets.patch;name=p"
+
+SRC_URI[p.md5sum] = "6533ca02d3dbe01f0e96606f7fced4bf"
+SRC_URI[p.sha256sum] = "6059410a6ed64f68a07aa28cc65bc1c7ee6c6528f2750f1c5ba966d82eb521b3"
+
 BBCLASSEXTEND = "native"
