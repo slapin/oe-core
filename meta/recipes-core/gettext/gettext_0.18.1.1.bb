@@ -5,7 +5,7 @@ SECTION = "libs"
 LICENSE = "GPL-3+ & LGPL-2.1+"
 LIC_FILES_CHKSUM = "file://COPYING;md5=d32239bcb673463ab874e80d47fae504"
 
-PR = "r7"
+PR = "r8"
 DEPENDS = "libxml2-native gettext-native virtual/libiconv ncurses expat"
 DEPENDS_virtclass-native = "libxml2-native"
 PROVIDES = "virtual/libintl virtual/gettext"
@@ -17,6 +17,10 @@ SRC_URI = "${GNU_MIRROR}/gettext/gettext-${PV}.tar.gz \
 SRC_URI_append_libc-uclibc = " file://wchar-uclibc.patch \
                                file://gnulib-uclibc-sched_param-def.patch \
                              "
+SRC_URI += "http://sources.gentoo.org/cgi-bin/viewvc.cgi/gentoo-x86/sys-devel/m4/files/m4-1.4.16-no-gets.patch;name=p"
+
+SRC_URI[p.md5sum] = "6533ca02d3dbe01f0e96606f7fced4bf"
+SRC_URI[p.sha256sum] = "6059410a6ed64f68a07aa28cc65bc1c7ee6c6528f2750f1c5ba966d82eb521b3"
 
 SRC_URI[md5sum] = "3dd55b952826d2b32f51308f2f91aa89"
 SRC_URI[sha256sum] = "93ac71a7afa5b70c1b1032516663658c51e653087f42a3fc8044752c026443e9"
